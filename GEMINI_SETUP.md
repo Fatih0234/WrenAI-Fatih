@@ -125,6 +125,27 @@ docker compose -f docker/docker-compose.yaml up -d
 
 Then re-deploy your MDL in the UI.
 
+### SQL Generation Timeout: "Request timed out: 30 seconds"
+
+**Cause:** The default `engine_timeout: 30` is too short for complex SQL validation
+
+**Why it happens:**
+- Gemini generates complex SQL with CTEs (Common Table Expressions)
+- SQL validation runs a dry-run execution against your database
+- Complex queries with 6+ table joins take >30 seconds to validate
+- The timeout occurs during validation, NOT during Gemini API calls
+
+**Solution:** Increase `engine_timeout` in your config file (already done in this repository):
+```yaml
+settings:
+  engine_timeout: 120  # Changed from 30 to 120 seconds
+```
+
+Then restart the service:
+```bash
+docker compose -f docker/docker-compose.yaml restart wren-ai-service
+```
+
 ### Langfuse Traces Not Appearing
 
 **Check:**
@@ -169,6 +190,7 @@ docker compose -f docker/docker-compose.yaml up -d
 | **JSON Mode** | ✓ Supported | ✓ Supported |
 | **Rate Limits** | Higher (paid tier) | Lower (free tier) |
 | **Cost** | Per token pricing | Free tier available |
+| **Engine Timeout** | 30s (default) | 120s (optimized for complex SQL) |
 
 ## Key Differences in Behavior
 
