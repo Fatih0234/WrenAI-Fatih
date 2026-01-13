@@ -153,7 +153,7 @@ pipes:
 settings:
   doc_endpoint: https://docs.getwren.ai
   is_oss: true
-  engine_timeout: 30
+  engine_timeout: 120
   column_indexing_batch_size: 50
   table_retrieval_size: 10
   table_column_retrieval_size: 100
